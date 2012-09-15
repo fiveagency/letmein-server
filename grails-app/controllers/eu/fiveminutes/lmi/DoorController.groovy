@@ -1,5 +1,6 @@
 package eu.fiveminutes.lmi
 
+import grails.plugins.springsecurity.Secured
 
 class DoorController {
 
@@ -7,9 +8,11 @@ class DoorController {
     
     def doorService
 
+    @Secured([Role.USER, Role.ADMIN])
     def index() {
     }
     
+    @Secured([Role.USER, Role.ADMIN])
     def show(Long id) {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
@@ -21,6 +24,7 @@ class DoorController {
         [doorInstance: doorInstance]
     }
 
+    @Secured([Role.USER, Role.ADMIN])
     def edit(Long id) {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
@@ -32,6 +36,7 @@ class DoorController {
         [doorInstance: doorInstance]
     }
 
+    @Secured([Role.USER, Role.ADMIN])
     def update(Long id, Long version) {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
@@ -81,6 +86,7 @@ class DoorController {
         }
     }
     
+    @Secured([Role.USER, Role.ADMIN])
     def openAuth() {
         doorService.open()
         redirect(action: "index")

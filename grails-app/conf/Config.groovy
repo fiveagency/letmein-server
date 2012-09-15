@@ -82,3 +82,8 @@ log4j = {
 
     info 'grails.app', 'eu.fiveminutes.lmi'
 }
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'eu.fiveminutes.lmi.User'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'eu.fiveminutes.lmi.UserRole'
+grails.plugins.springsecurity.authority.className = 'eu.fiveminutes.lmi.Role'
