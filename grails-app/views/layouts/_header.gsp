@@ -5,7 +5,8 @@
 <div class="nav" role="navigation">
 	<ul>
 		<sec:ifLoggedIn>
-			<li><g:link class="home" controller="door"><g:message code="default.door.label" default="Door"/></g:link></li>
+			<li><g:link class="home" controller="door"><g:message code="default.door.label" default="Home"/></g:link></li>
+			<li><g:link class="create" controller="admin"><g:message code="default.admin.label" default="Admin console"/></g:link></li>
 		</sec:ifLoggedIn>
 	</ul>
 </div>
