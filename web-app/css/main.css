@@ -594,3 +594,26 @@ a.skip {
 	position: absolute;
 	left: -9999px;
 }
+
+.header-main {  
+  color: #fff;
+  font-size: 3em;
+  font-weight: bold;
+  text-decoration: none;
+  
+}  
+
+#loginHeader { 
+  float: right; 
+  color: #fff;
+  margin: 0.5em;
+} 
+ 
+#loginHeader a{ 
+  color: #fff; 
+  margin: 0;
+}
+
+#grailsLogo img {
+    margin: 0.5em 0.5em 0em 0.5em;
+}
