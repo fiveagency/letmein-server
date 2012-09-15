@@ -5,7 +5,7 @@ class DoorService {
 
     def serialPortService
 
-    def open() {
+    synchronized def open() {
         log.info "Opening door"
         serialPortService.sendData()
     }

@@ -12,7 +12,7 @@ class SerialPortService {
     private static final int TIME_OUT = 2000
     private static final int DATA_RATE = 9600
 
-    String portName = "COM6"
+    String portName = "COM3"
     int duration = 500
 
     private SerialPort serialPort
