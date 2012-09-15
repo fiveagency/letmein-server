@@ -12,8 +12,8 @@ class SerialPortService {
     private static final int TIME_OUT = 2000
     private static final int DATA_RATE = 9600
 
-    String portName = "COM3"
-    int duration = 500
+    String portName
+    int signalDuration
 
     private SerialPort serialPort
     private OutputStream output
@@ -49,8 +49,8 @@ class SerialPortService {
 
     private def write() {
         try {
-            log.info "Sending duration: " + duration
-            output.write(String.valueOf(duration).getBytes())
+            log.info "Sending duration: " + signalDuration
+            output.write(String.valueOf(signalDuration).getBytes())
         } catch (Exception e) {
             log.error("Error while writing to serial port!", e)
         }
@@ -71,7 +71,7 @@ class SerialPortService {
             initialize()
             write()
             //wait before closing port
-            Thread.sleep(duration + 1000)
+            Thread.sleep(signalDuration + 1000)
             close()
         } catch (Exception e) {
             log.error("Error while using serial port", e)
