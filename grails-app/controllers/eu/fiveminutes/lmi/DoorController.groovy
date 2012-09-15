@@ -1,13 +1,14 @@
 package eu.fiveminutes.lmi
 
-import grails.converters.JSON
 
 class DoorController {
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+    static allowedMethods = [update: "POST"]
+    
+    def doorService
 
     def index() {
-        params["id"]=1
+        params["id"] = 1
         redirect(action: "show", params: params)
     }
 
@@ -63,23 +64,22 @@ class DoorController {
     }
 
     def open(String pin) {
-        def doorStatus = new DoorStatus()
         def doors = Door.list(max:1)
         if (doors) {
             def door = doors[0]
             if (door.pin == pin) {
                 log.info "Received correct PIN"
-                doorStatus.status = "OK"
+                doorService.open()
+                response.sendError(200)
             }
             else {
                 log.info "Received incorrect PIN"
-                doorStatus.status = "FAIL"
+                response.sendError(401, "Incorrect PIN")
             }
         }
         else {
             log.error "No door in database!"
-            doorStatus.status = "FAIL"
+            response.sendError(404, "Door not found in db!")
         }
-        render doorStatus as JSON
     }
 }
