@@ -5,7 +5,7 @@ class DoorService {
 
     def serialPortService
 
-    def addOpenRequest() {
+    def open() {
         log.info "Opening door"
         serialPortService.sendData()
     }

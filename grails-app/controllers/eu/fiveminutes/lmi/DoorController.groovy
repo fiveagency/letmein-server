@@ -3,15 +3,13 @@ package eu.fiveminutes.lmi
 
 class DoorController {
 
-    static allowedMethods = [update: "POST"]
+    static allowedMethods = [update: "POST", openAuth: "POST"]
     
     def doorService
 
     def index() {
-        params["id"] = 1
-        redirect(action: "show", params: params)
     }
-
+    
     def show(Long id) {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
@@ -81,5 +79,10 @@ class DoorController {
             log.error "No door in database!"
             response.sendError(404, "Door not found in db!")
         }
+    }
+    
+    def openAuth() {
+        doorService.open()
+        redirect(action: "index")
     }
 }
