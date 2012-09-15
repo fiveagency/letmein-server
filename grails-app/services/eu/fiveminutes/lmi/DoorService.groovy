@@ -1,13 +1,12 @@
 package eu.fiveminutes.lmi
 
-import eu.fiveminutes.lmi.arduino.ArduinoControl
 
 class DoorService {
 
-    private ArduinoControl arduinoControl = new ArduinoControl()
+    def serialPortService
 
-    def open() {
+    def addOpenRequest() {
         log.info "Opening door"
-        arduinoControl.open()
+        serialPortService.sendData()
     }
 }
