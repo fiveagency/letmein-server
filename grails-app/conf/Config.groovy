@@ -11,8 +11,6 @@
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-grails.config.locations = ["classpath:letmein-config.properties"]
-
 grails.project.groupId = appName // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
@@ -64,9 +62,11 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+        grails.config.locations = ["classpath:letmein-config-dev.properties"]
     }
     production {
         grails.logging.jul.usebridge = false
+        grails.config.locations = ["classpath:letmein-config.properties"]
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }

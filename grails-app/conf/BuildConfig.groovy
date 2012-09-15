@@ -2,9 +2,9 @@ grails.servlet.version = "2.5" // Change depending on target container complianc
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
-grails.project.target.level = 1.6
-grails.project.source.level = 1.6
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.target.level = 1.7
+grails.project.source.level = 1.7
+grails.project.war.file = "target/${appName}.war"
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -55,5 +55,7 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.0'
 
         compile ":spring-security-core:1.2.7.1"
+
+        runtime ":mysql-connectorj:5.1.12"
     }
 }

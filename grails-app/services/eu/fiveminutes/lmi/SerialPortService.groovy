@@ -5,18 +5,21 @@ import gnu.io.SerialPort;
 import gnu.io.CommPortIdentifier
 import gnu.io.SerialPort
 
-import java.util.concurrent.TimeUnit
-
 class SerialPortService {
 
     private static final int TIME_OUT = 2000
     private static final int DATA_RATE = 9600
 
-    String portName
-    int signalDuration
-
     private SerialPort serialPort
     private OutputStream output
+    private int signalDuration
+    private String portName
+
+    def SerialPortService(String portName, int signalDuration) {
+        this.portName = portName
+        this.signalDuration = signalDuration
+        initialize();
+    }
 
     private def initialize() {
         CommPortIdentifier portId = null
@@ -44,7 +47,6 @@ class SerialPortService {
                 SerialPort.PARITY_NONE)
 
         output = serialPort.getOutputStream()
-        Thread.sleep(TimeUnit.SECONDS.toMillis(1))
     }
 
     private def write() {
@@ -68,11 +70,7 @@ class SerialPortService {
 
     def sendData() {
         try {
-            initialize()
             write()
-            //wait before closing port
-            Thread.sleep(signalDuration + 1000)
-            close()
         } catch (Exception e) {
             log.error("Error while using serial port", e)
         }
