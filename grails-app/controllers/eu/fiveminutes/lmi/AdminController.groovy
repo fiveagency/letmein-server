@@ -6,38 +6,28 @@ import grails.plugins.springsecurity.Secured
 class AdminController {
 
     static allowedMethods = [update: "POST"]
+    
+    def springSecurityService
 
     def index() {
-        params["id"] = 1
-        redirect(action: "show", params:params)
+        redirect(action: "edit", params:params)
     }
     
-    def show(Long id) {
-        def doorInstance = Door.get(id)
-        if (!doorInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'door.label', default: 'Door'), id])
-            redirect(controller: "door")
-            return
+    def edit() {
+        def doors = Door.list(max:1)
+        if (!doors) {
+            log.error "No door in database!"
+            response.sendError(500, "Door not found in db!")
         }
 
-        [doorInstance: doorInstance]
-    }
-    
-    def edit(Long id) {
-        def doorInstance = Door.get(id)
-        if (!doorInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'door.label', default: 'Door'), id])
-            redirect(controller: "door")
-            return
-        }
-
-        [doorInstance: doorInstance]
+        [doorInstance: doors[0]]
     }
     
     def update(Long id, Long version) {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
-            flash.message = message(code: 'default.not.found.message', args: [message(code: 'door.label', default: 'Door'), id])
+            log.error "No door in database!"
+            flash.message = message(code: 'door.not.found.message', default: 'No door in database!')
             redirect(controller: "door")
             return
         }
@@ -52,6 +42,21 @@ class AdminController {
             }
         }
 
+        if (params.password) {
+            if (params.password != params.password2) {
+                flash.message = message(code: 'error.password.dont.match.message', default: 'Passwords do not match')
+                render(view: "edit", model: [doorInstance: doorInstance])
+                return
+            }
+            def user = User.get(springSecurityService.currentUser.id)
+            user.password = params.password
+            if (!user.save(flush: true)) {
+                flash.message = message(code: 'error.password.not.saved.message', default: 'Password not saved')
+                render(view: "edit", model: [doorInstance: doorInstance])
+                return
+            }
+        }
+        
         doorInstance.properties = params
 
         if (!doorInstance.save(flush: true)) {
@@ -59,7 +64,7 @@ class AdminController {
             return
         }
 
-        flash.message = message(code: 'default.updated.message', args: [message(code: 'door.label', default: 'Door'), doorInstance.id])
-        redirect(action: "show", id: doorInstance.id)
+        flash.message = message(code: 'settings.updated.message', default: 'Settings updated')
+        redirect(action: "edit", id: doorInstance.id)
     }
 }
