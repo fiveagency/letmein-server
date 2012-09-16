@@ -17,7 +17,9 @@ class AdminController {
         def doors = Door.list(max:1)
         if (!doors) {
             log.error "No door in database!"
+            flash.error = message(code: 'door.not.found.message', default: 'No door in database!')
             response.sendError(500, "Door not found in db!")
+            return
         }
 
         [doorInstance: doors[0]]
@@ -27,8 +29,8 @@ class AdminController {
         def doorInstance = Door.get(id)
         if (!doorInstance) {
             log.error "No door in database!"
-            flash.message = message(code: 'door.not.found.message', default: 'No door in database!')
-            redirect(controller: "door")
+            flash.error = message(code: 'door.not.found.message', default: 'No door in database!')
+            response.sendError(500, "Door not found in db!")
             return
         }
 
@@ -44,14 +46,14 @@ class AdminController {
 
         if (params.password) {
             if (params.password != params.password2) {
-                flash.message = message(code: 'error.password.dont.match.message', default: 'Passwords do not match')
+                flash.error = message(code: 'error.password.dont.match.message', default: 'Passwords do not match')
                 render(view: "edit", model: [doorInstance: doorInstance])
                 return
             }
             def user = User.get(springSecurityService.currentUser.id)
             user.password = params.password
             if (!user.save(flush: true)) {
-                flash.message = message(code: 'error.password.not.saved.message', default: 'Password not saved')
+                flash.error = message(code: 'error.password.not.saved.message', default: 'Password not saved')
                 render(view: "edit", model: [doorInstance: doorInstance])
                 return
             }

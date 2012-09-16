@@ -1,4 +1,3 @@
-
 <%@ page import="eu.fiveminutes.lmi.Door" %>
 <!doctype html>
 <html>

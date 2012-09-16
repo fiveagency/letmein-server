@@ -5,6 +5,6 @@ class Door {
     String pin
 
     static constraints = {
-        pin blank: false, unique: true
+        pin blank: false, unique: true, size: 4..4
     }
 }
