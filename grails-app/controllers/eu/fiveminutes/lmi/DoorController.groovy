@@ -4,7 +4,7 @@ import grails.plugins.springsecurity.Secured
 
 class DoorController {
 
-    static allowedMethods = [update: "POST", openAuth: "POST"]
+    static allowedMethods = [open: "POST", openAuth: "POST"]
     
     def doorService
 

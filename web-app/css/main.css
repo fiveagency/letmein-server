@@ -617,3 +617,10 @@ a.skip {
 #grailsLogo img {
     margin: 0.5em 0.5em 0em 0.5em;
 }
+
+.redButton {
+	background-color: #FFFFFF;
+    border: 0 none;
+    display: block;
+    margin: 1em auto;
+}

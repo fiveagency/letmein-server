@@ -5,6 +5,8 @@ import grails.plugins.springsecurity.Secured
 @Secured([Role.ADMIN])
 class AdminController {
 
+    static allowedMethods = [update: "POST"]
+
     def index() {
         params["id"] = 1
         redirect(action: "show", params:params)

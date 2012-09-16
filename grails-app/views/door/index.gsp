@@ -12,9 +12,8 @@
             <div class="message" role="status">${flash.message}</div>
             </g:if>
             <g:form>
-                <fieldset class="buttons">
-                    <g:actionSubmit class="edit" action="openAuth" value="${message(code: 'default.button.open.label', default: 'Open door')}" />
-                </fieldset>
+                <g:actionSubmitImage  class="redButton" src="${resource(dir: 'images', file: 'red_button.png')}" action="openAuth" 
+                    value="${message(code: 'default.button.open.label', default: 'Open door')}" />
             </g:form>
         </div>
     </body>
