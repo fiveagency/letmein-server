@@ -22,40 +22,40 @@ class SerialPortService {
     }
 
     private def initialize() {
-        CommPortIdentifier portId = null
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers()
+        try {
+            CommPortIdentifier portId = null
+            Enumeration portEnum = CommPortIdentifier.getPortIdentifiers()
 
-        // iterate through, looking for the port
-        while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement()
-            if (currPortId.getName().equals(portName)) {
-                portId = currPortId
-                break
+            // iterate through, looking for the port
+            while (portEnum.hasMoreElements()) {
+                CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement()
+                if (currPortId.getName().equals(portName)) {
+                    portId = currPortId
+                    break
+                }
             }
+
+            if (portId == null) {
+                log.error "Could not find COM port."
+                return
+            }
+
+            // open serial port, and use class name for the appName.
+            serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT)
+
+            // set port parameters
+            serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                    SerialPort.PARITY_NONE)
+
+            output = serialPort.getOutputStream()
+        } catch (Exception e) {
+            log.error("Error while initializing serial port!", e)
         }
-
-        if (portId == null) {
-            log.error "Could not find COM port."
-            return
-        }
-
-        // open serial port, and use class name for the appName.
-        serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT)
-
-        // set port parameters
-        serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-                SerialPort.PARITY_NONE)
-
-        output = serialPort.getOutputStream()
     }
 
     private def write() {
-        try {
-            log.info "Sending duration: " + signalDuration
-            output.write(String.valueOf(signalDuration).getBytes())
-        } catch (Exception e) {
-            log.error("Error while writing to serial port!", e)
-        }
+        log.info "Sending duration: " + signalDuration
+        output.write(String.valueOf(signalDuration).getBytes())
     }
 
     /**
@@ -72,7 +72,14 @@ class SerialPortService {
         try {
             write()
         } catch (Exception e) {
-            log.error("Error while using serial port", e)
+            log.error("Error while writing to serial port, retrying", e)
+            try {
+                close()
+                initialize()
+                write()
+            } catch (Exception e2) {
+                log.error("Error while writing to serial port on second try, giving up", e2)
+            }
         }
 
     }
