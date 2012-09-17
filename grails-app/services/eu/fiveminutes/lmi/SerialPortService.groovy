@@ -5,6 +5,8 @@ import gnu.io.SerialPort;
 import gnu.io.CommPortIdentifier
 import gnu.io.SerialPort
 
+import java.util.concurrent.TimeUnit
+
 class SerialPortService {
 
     private static final int TIME_OUT = 2000
@@ -56,6 +58,8 @@ class SerialPortService {
     private def write() {
         log.info "Sending duration: " + signalDuration
         output.write(String.valueOf(signalDuration).getBytes())
+        log.info "Duration sent"
+        Thread.sleep(TimeUnit.SECONDS.toMillis(1))
     }
 
     /**
