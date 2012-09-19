@@ -626,7 +626,6 @@ a.skip {
 }
 
 .cameraStream {
-    border: 0 none;
     display: block;
     margin: 1em auto;
 }

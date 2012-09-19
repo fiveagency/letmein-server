@@ -7,4 +7,6 @@ class Door {
     static constraints = {
         pin blank: false, unique: true, size: 4..4
     }
+
+    static mapping = { cache true }
 }
