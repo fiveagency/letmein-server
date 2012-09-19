@@ -4,7 +4,7 @@ import grails.plugins.springsecurity.Secured
 
 class DoorController {
 
-    static allowedMethods = [open: "POST", openAuth: "POST"]
+    static allowedMethods = [open: "POST", openAuth: "POST", validate: "POST"]
     
     def doorService
 
@@ -13,12 +13,24 @@ class DoorController {
     }
 
     def open(String pin) {
+        log.info "Received open request"
+        proccessPin(pin, true)
+    }
+    
+    def validate(String pin) {
+        log.info "Received validate request"
+        proccessPin(pin, false)
+    }
+    
+    private proccessPin(String pin, boolean openDoor) {
         def doors = Door.list(max:1)
         if (doors) {
             def door = doors[0]
             if (door.pin == pin) {
                 log.info "Received correct PIN"
-                doorService.open()
+                if (openDoor) {
+                    doorService.open()
+                }
                 response.sendError(200)
             }
             else {
@@ -31,6 +43,7 @@ class DoorController {
             response.sendError(404, "Door not found in db!")
         }
     }
+    
     
     @Secured([Role.USER, Role.ADMIN])
     def openAuth() {

@@ -24,6 +24,7 @@ class SerialPortService {
     }
 
     private def initialize() {
+        log.info "Initializing"
         try {
             CommPortIdentifier portId = null
             Enumeration portEnum = CommPortIdentifier.getPortIdentifiers()
