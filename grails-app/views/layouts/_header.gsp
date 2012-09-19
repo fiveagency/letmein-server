@@ -4,9 +4,11 @@
 </div>
 <div class="nav" role="navigation">
     <ul>
-        <sec:ifLoggedIn>
+        <sec:access controller="door">
             <li><g:link class="home" controller="door"><g:message code="default.door.label" default="Door control"/></g:link></li>
+        </sec:access>
+        <sec:access controller="admin">
             <li><g:link class="list" controller="admin"><g:message code="default.admin.label" default="Admin console"/></g:link></li>
-        </sec:ifLoggedIn>
+        </sec:access>
     </ul>
 </div>
