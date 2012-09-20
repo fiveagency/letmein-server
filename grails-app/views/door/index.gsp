@@ -3,6 +3,16 @@
 <html>
     <head>
         <meta name="layout" content="main">
+        <script type="text/javascript">
+        function showOpenButtonPressed() {
+            $('#doorButton').hide();
+            $('#doorButtonPressed').show();
+        }
+        function hideOpenButtonPressed() {
+            $('#doorButtonPressed').hide();
+            $('#doorButton').show();
+        }
+        </script>
     </head>
     <body>
         <a href="#show-door" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
@@ -11,10 +21,11 @@
             <div class="message" role="status">${flash.message}</div>
             </g:if>
             <img class="cameraStream" src="http://${grailsApplication.config.camera.ip}/img/video.mjpeg">
-            <g:form>
-                <g:actionSubmitImage  class="redButton" src="${resource(dir: 'images', file: 'red_button.png')}" action="openAuth" 
-                    value="${message(code: 'default.button.open.label', default: 'Open door')}" />
-            </g:form>
+            <g:remoteLink action="openAuth" onLoading="showOpenButtonPressed()" onComplete="hideOpenButtonPressed()" >
+                <img id="doorButton" class="doorButton" src="<g:resource dir="images" file="red_button.png"/> "/>
+                <img id="doorButtonPressed" class="doorButton" style="display: none;" src="<g:resource dir="images" file="kapow.png"/> "/>
+            </g:remoteLink>
+            
         </div>
     </body>
 </html>

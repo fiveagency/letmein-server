@@ -1,5 +1,5 @@
 int base = 10;
-int MAX_DURATION = 5000;
+int MAX_DURATION = 1000;
 
 void setup(){
   Serial.begin(9600);
