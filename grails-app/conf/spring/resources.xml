@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
     <task:scheduled-tasks scheduler="doorWorkerScheduler">
-        <task:scheduled ref="doorWorkerService" method="consumeOpenDoorRequests" fixed-delay="5000"/>
+        <task:scheduled ref="doorWorkerService" method="consumeOpenDoorRequests" fixed-delay="${doorWorker.delay}"/>
     </task:scheduled-tasks>
 
     <task:scheduler id="doorWorkerScheduler" pool-size="1"/>
