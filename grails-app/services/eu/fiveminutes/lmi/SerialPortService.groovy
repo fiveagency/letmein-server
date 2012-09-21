@@ -39,7 +39,7 @@ class SerialPortService {
             }
 
             if (portId == null) {
-                log.error "Could not find COM port."
+                log.error "Could not find COM port: $portName"
                 return
             }
 
@@ -60,7 +60,6 @@ class SerialPortService {
         log.info "Sending duration: " + signalDuration
         output.write(String.valueOf(signalDuration).getBytes())
         log.info "Duration sent"
-        Thread.sleep(TimeUnit.SECONDS.toMillis(1))
     }
 
     /**
@@ -78,6 +77,7 @@ class SerialPortService {
             write()
         } catch (Exception e) {
             log.error("Error while writing to serial port, retrying", e)
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2))
             try {
                 close()
                 initialize()

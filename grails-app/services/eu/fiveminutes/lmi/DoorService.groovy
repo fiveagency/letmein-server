@@ -1,12 +1,16 @@
 package eu.fiveminutes.lmi
 
-
 class DoorService {
 
-    def serialPortService
+    def openDoorQueue
 
-    synchronized def open() {
-        log.info "Opening door"
-        serialPortService.sendData()
+    def open() {
+        try {
+            log.info "Adding open door request to queue"
+            openDoorQueue.put(1)
+        }
+        catch(Exception e) {
+            log.error("Error adding open door request to queue", e)
+        }
     }
 }
