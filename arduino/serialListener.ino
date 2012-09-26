@@ -1,22 +1,33 @@
+int RELAY_ON = LOW;
+int RELAY_OFF = HIGH;
+int DURATION = 500;
 int base = 10;
-int MAX_DURATION = 1000;
+int state = RELAY_OFF;
+unsigned long previousMillis = 0;
 
 void setup(){
   Serial.begin(9600);
-  pinMode(base, OUTPUT);    
+  digitalWrite(base, RELAY_OFF);
+  pinMode(base, OUTPUT);
 }
 
 void loop(){
-  if (Serial.available()) {
-//    read the most recent byte (which will be from 0 to 255):
-    int duration = Serial.parseInt();
-//    Serial.println(duration);
-    if (duration > MAX_DURATION) {
-      duration = MAX_DURATION;
+  if (state == RELAY_ON) {
+    unsigned long currentMillis = millis();
+    if(currentMillis - previousMillis > DURATION) {
+      Serial.println("RELAY_OFF");
+      state = RELAY_OFF;
+      digitalWrite(base, RELAY_OFF);
     }
-    digitalWrite(base, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(duration);           // wait for 5 seconds
-    digitalWrite(base, LOW);    // turn the LED off by making the voltage LOW
   }
 }
 
+void serialEvent() {
+  boolean found = Serial.find("OPEN");
+  if (found && state == RELAY_OFF) {
+    Serial.println("RELAY_ON");
+    state = RELAY_ON;
+    digitalWrite(base, RELAY_ON);
+    previousMillis = millis();
+  }
+}

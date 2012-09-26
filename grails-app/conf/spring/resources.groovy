@@ -8,7 +8,7 @@ beans = {
     openDoorQueue(LinkedBlockingQueue){
 
     }
-    serialPortService(SerialPortService, '${serialPortService.portName}', '${serialPortService.signalDuration}'){
+    serialPortService(SerialPortService, '${serialPortService.portName}'){
 
     }
     doorWorkerService(DoorWorkerService, openDoorQueue, serialPortService, '${doorWorker.delay}'){

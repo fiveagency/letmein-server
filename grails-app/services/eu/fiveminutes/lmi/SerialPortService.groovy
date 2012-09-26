@@ -11,15 +11,14 @@ class SerialPortService {
 
     private static final int TIME_OUT = 2000
     private static final int DATA_RATE = 9600
+    private static String OPEN_DOOR_COMMAND = "OPEN"
 
     private SerialPort serialPort
     private OutputStream output
-    private int signalDuration
     private String portName
 
-    def SerialPortService(String portName, int signalDuration) {
+    def SerialPortService(String portName) {
         this.portName = portName
-        this.signalDuration = signalDuration
         initialize();
     }
 
@@ -57,9 +56,9 @@ class SerialPortService {
     }
 
     private def write() {
-        log.info "Sending duration: " + signalDuration
-        output.write(String.valueOf(signalDuration).getBytes())
-        log.info "Duration sent"
+        log.info "Sending $OPEN_DOOR_COMMAND command"
+        output.write(OPEN_DOOR_COMMAND.getBytes())
+        log.info "Command sent"
     }
 
     /**
