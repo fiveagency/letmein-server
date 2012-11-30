@@ -1,17 +1,20 @@
 import java.util.concurrent.LinkedBlockingQueue
 
+import eu.fiveminutes.lmi.ArduinoHttpService
 import eu.fiveminutes.lmi.DoorWorkerService
-import eu.fiveminutes.lmi.SerialPortService
 
 // Place your Spring DSL code here
 beans = {
     openDoorQueue(LinkedBlockingQueue){
 
     }
-    serialPortService(SerialPortService, '${serialPortService.portName}'){
+    //    arduinoService(ArduinoSerialService, '${arduino.serialPortName}'){
+    //
+    //    }
+    arduinoService(ArduinoHttpService, '${arduino.ip}'){
 
     }
-    doorWorkerService(DoorWorkerService, openDoorQueue, serialPortService, '${doorWorker.delay}'){
+    doorWorkerService(DoorWorkerService, openDoorQueue, arduinoService, '${doorWorker.delay}'){
 
     }
 }

@@ -7,7 +7,7 @@ import gnu.io.SerialPort
 
 import java.util.concurrent.TimeUnit
 
-class SerialPortService {
+class ArduinoSerialService {
 
     private static final int TIME_OUT = 2000
     private static final int DATA_RATE = 9600
@@ -17,9 +17,25 @@ class SerialPortService {
     private OutputStream output
     private String portName
 
-    def SerialPortService(String portName) {
+    def ArduinoSerialService(String portName) {
         this.portName = portName
-        initialize();
+        initialize()
+    }
+
+    def sendRequest() {
+        try {
+            write()
+        } catch (Exception e) {
+            log.error("Error while writing to serial port, retrying", e)
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2))
+            try {
+                close()
+                initialize()
+                write()
+            } catch (Exception e2) {
+                log.error("Error while writing to serial port on second try, giving up", e2)
+            }
+        }
     }
 
     private def initialize() {
@@ -69,22 +85,5 @@ class SerialPortService {
         if (serialPort != null) {
             serialPort.close()
         }
-    }
-
-    def sendData() {
-        try {
-            write()
-        } catch (Exception e) {
-            log.error("Error while writing to serial port, retrying", e)
-            Thread.sleep(TimeUnit.SECONDS.toMillis(2))
-            try {
-                close()
-                initialize()
-                write()
-            } catch (Exception e2) {
-                log.error("Error while writing to serial port on second try, giving up", e2)
-            }
-        }
-
     }
 }

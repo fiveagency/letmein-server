@@ -3,13 +3,13 @@ package eu.fiveminutes.lmi
 class DoorWorkerService {
 
     private def openDoorQueue
-    private def serialPortService
+    private def arduinoService
     private long delay
     private Date lastTimeDoorOpened = new Date()
 
-    def DoorWorkerService(def openDoorQueue, def serialPortService, long delay) {
+    def DoorWorkerService(def openDoorQueue, def arduinoService, long delay) {
         this.openDoorQueue = openDoorQueue 
-        this.serialPortService = serialPortService 
+        this.arduinoService = arduinoService 
         this.delay = delay
     }
 
@@ -28,7 +28,7 @@ class DoorWorkerService {
             Date lastOpenDoorRequest = openDoorRequests.get(0)
             if (lastOpenDoorRequest.getTime() - lastTimeDoorOpened.getTime() > delay) {
                 log.info "Last open door request: $lastOpenDoorRequest is more than $delay ms after last time door opened: $lastTimeDoorOpened. Opening door"
-                serialPortService.sendData()
+                arduinoService.sendRequest()
                 lastTimeDoorOpened = new Date()
             }
             else {
