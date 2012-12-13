@@ -23,24 +23,24 @@ Todo:
 * use secret knock to open the door. This will be done using piezo element placed on the door. Communication between the door and Arduino will be done using two eZ430-RF2500 wireless boards. One will be connected to piezo element on the door. Other will be connected to Arduino or possibly to the server app
 * replace electric circuit described above with opto isolated relay board
 
-ENC28J60 network module
-VCC - 3.3V
-GND - GND
-SCK - Pin 13
-SO - Pin 12
-SI - Pin 11
-CS - Pin 8
+ENC28J60 network module:
+* VCC - 3.3V
+* GND - GND
+* SCK - Pin 13
+* SO - Pin 12
+* SI - Pin 11
+* CS - Pin 8
 
-opto isolated reley board
-VCC - 5V
-GND - GND
-IN - Pin 4
+opto isolated reley board:
+* VCC - 5V
+* GND - GND
+* IN - Pin 4
 
-eZ430-RF2500 wireless board - receiver (connected to Arduino)
-VCC - 3.3V
-GND - GND
-P4.3 (Pin 8) - Pin 2
+eZ430-RF2500 wireless board - receiver (connected to Arduino):
+* VCC - 3.3V
+* GND - GND
+* P4.3 (Pin 8) - Pin 2
 
-eZ430-RF2500 wireless board - sender (connected to piezo and mounted on door)
-GND - Piezo -
-A0 (Pin 3) - Piezo +
+eZ430-RF2500 wireless board - sender (connected to piezo and mounted on door):
+* GND - Piezo -
+* A0 (Pin 3) - Piezo +
