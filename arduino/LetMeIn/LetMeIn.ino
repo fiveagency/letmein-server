@@ -28,7 +28,8 @@ static byte gwip[] = { 10,5,1,1 };
 static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x34 };
 
 byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
-char page[] PROGMEM = "HTTP/1.1 200 OK\r\n";
+char pageOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
+char pageFail[] PROGMEM = "HTTP/1.1 401 Unauthorized\r\n";
 
 void setup() {
   digitalWrite(relay, RELAY_OFF);
@@ -128,15 +129,17 @@ void checkEthernet() {
   word pos = ether.packetLoop(len);
   if (pos) {
     char* data = (char *) Ethernet::buffer + pos;
-//    Serial.println(data);
     
     if(strstr(data, "GET /door/open") != 0) {
       Serial.println("Received OPEN command via Ethernet");
       turnRelayOn();
+      memcpy_P(ether.tcpOffset(), pageOK, sizeof pageOK);
+      ether.httpServerReply(sizeof pageOK - 1);
     }
-
-    memcpy_P(ether.tcpOffset(), page, sizeof page);
-    ether.httpServerReply(sizeof page - 1);
+    else {
+      memcpy_P(ether.tcpOffset(), pageFail, sizeof pageFail);
+      ether.httpServerReply(sizeof pageFail - 1);
+    }
   }
 }
 
