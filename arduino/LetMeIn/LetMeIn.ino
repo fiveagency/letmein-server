@@ -19,13 +19,13 @@ unsigned long relaySignalStartMilis = 0;
 
 #if STATIC
 // ethernet interface ip address
-static byte myip[] = { 10,5,1,105 };
+static byte myip[] = { 10,5,1,230 };
 // gateway ip address
 static byte gwip[] = { 10,5,1,1 };
 #endif
 
 // ethernet mac address - must be unique on your network
-static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x34 };
+static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x38 };
 
 byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
 char pageOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
