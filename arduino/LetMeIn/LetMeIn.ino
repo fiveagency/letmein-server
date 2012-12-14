@@ -25,7 +25,7 @@ static byte gwip[] = { 10,5,1,1 };
 #endif
 
 // ethernet mac address - must be unique on your network
-static byte mymac[] = { 0x74,0x69,0x69,0x2D,0x30,0x38 };
+static byte MAC[] = { 0x74,0x69,0x69,0x2D,0x30,0x38 };
 
 byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
 char pageOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
@@ -47,7 +47,7 @@ void MSP430Setup() {
 }
 
 void ethernetSetup() {
-  if (ether.begin(sizeof Ethernet::buffer, mymac) == 0) {
+  if (ether.begin(sizeof Ethernet::buffer, MAC) == 0) {
     Serial.println( "Failed to access Ethernet controller");
   }
 #if STATIC
@@ -59,7 +59,7 @@ void ethernetSetup() {
 
   Serial.print("MAC: ");
   for (byte i = 0; i < 6; ++i) {
-    Serial.print(mymac[i], HEX);
+    Serial.print(MAC[i], HEX);
     if (i < 5)
       Serial.print(':');
   }
@@ -128,7 +128,7 @@ void checkEthernet() {
   word len = ether.packetReceive();
   word pos = ether.packetLoop(len);
   if (pos) {
-    char* data = (char *) Ethernet::buffer + pos;
+    char *data = (char *) Ethernet::buffer + pos;
     
     if(strstr(data, "GET /door/open") != 0) {
       Serial.println("Received OPEN command via Ethernet");
