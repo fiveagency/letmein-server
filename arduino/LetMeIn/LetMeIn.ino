@@ -8,16 +8,18 @@
 #include <EEPROMex.h>
 
 #define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
+#define INACTIVE_STATE 2 //state when relay is off but is not accepting open commands
 
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
+const int INACTIVE_STATE_DURATION = 10000;
 const int relay = 4;
 const int MSP430 = 2;
 const int pinAddress = 0;
 
 int state = RELAY_OFF;
-unsigned long relaySignalStartMilis = 0;
+unsigned long stateStartMilis = 0;
 
 #if STATIC
 // ethernet interface ip address
@@ -98,21 +100,28 @@ void turnRelayOn() {
     Serial.println("RELAY_ON");
     state = RELAY_ON;
     digitalWrite(relay, RELAY_ON);
-    relaySignalStartMilis = millis();
+    stateStartMilis = millis();
   }
   else {
-    Serial.println("Relay is already on");
+    Serial.println("Relay is not in off state");
   }
 }
 
 void turnRelayOff() {
   if (state == RELAY_ON) {
     unsigned long currentMillis = millis();
-    if(currentMillis - relaySignalStartMilis > RELAY_SIGNAL_DURATION) {
+    if(currentMillis - stateStartMilis > RELAY_SIGNAL_DURATION) {
+      Serial.println("INACTIVE_STATE");
+      state = INACTIVE_STATE;
+      digitalWrite(relay, RELAY_OFF);
+      stateStartMilis = millis();
+    }
+  }
+  else if (state == INACTIVE_STATE) {
+    unsigned long currentMillis = millis();
+    if(currentMillis - stateStartMilis > INACTIVE_STATE_DURATION) {
       Serial.println("RELAY_OFF");
       state = RELAY_OFF;
-      digitalWrite(relay, RELAY_OFF);
-      delay(500);
     }
   }
 }
