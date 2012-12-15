@@ -5,6 +5,7 @@
  */
  
 #include <EtherCard.h>
+#include <EEPROMex.h>
 
 #define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
@@ -13,6 +14,7 @@ const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
 const int relay = 4;
 const int MSP430 = 2;
+const int pinAddress = 0;
 
 int state = RELAY_OFF;
 unsigned long relaySignalStartMilis = 0;
@@ -32,7 +34,7 @@ char replyOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
 char replyUnauthorized[] PROGMEM = "HTTP/1.1 401 Unauthorized\r\n";
 char replyBadRequest[] PROGMEM = "HTTP/1.1 400 Bad Request\r\n";
 
-String PIN = "1234";
+String PIN;
 
 void setup() {
   digitalWrite(relay, RELAY_OFF);
@@ -40,6 +42,10 @@ void setup() {
   
   Serial.begin(9600);
   Serial.println("Program start.");
+
+  //writePinToEEPROM("1234");
+  PIN = readPinFromEEPROM();
+  Serial.println("PIN: " + PIN);  
   
   MSP430Setup();
   ethernetSetup();
@@ -157,7 +163,8 @@ void checkEthernet() {
         String newPin = data.substring(start + 7, start + 7 + 4);
         if (newPin.length() == 4) {
           Serial.println(newPin);
-          PIN = newPin;
+          writePinToEEPROM(newPin);
+          PIN = readPinFromEEPROM();
           memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
           ether.httpServerReply(sizeof replyOK - 1);
         }
@@ -178,3 +185,15 @@ void checkEthernet() {
   }
 }
 
+void writePinToEEPROM(String pin) {
+  char data[5];
+  pin.toCharArray(data, 5);
+  EEPROM.writeBlock(pinAddress, data);
+}
+
+String readPinFromEEPROM() {
+  char data[5];
+  EEPROM.readBlock(pinAddress, data);
+  String pin = data;
+  return pin;
+}
