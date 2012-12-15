@@ -146,6 +146,7 @@ void checkEthernet() {
     boolean changePinCommand = data.startsWith("POST /door/changePin HTTP");
     boolean correctOldPin = data.indexOf("oldPin=" + PIN) > -1;
 
+    int replyCode = 401;
     if(correctPin && (openCommand || validateCommand)) {
       if (openCommand) {
         Serial.println("Received OPEN command via Ethernet");
@@ -154,34 +155,39 @@ void checkEthernet() {
       if (validateCommand) {
         Serial.println("Validated pin via Ethernet");
       }
-      memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
-      ether.httpServerReply(sizeof replyOK - 1);
+      replyCode = 200;
     }
     else if (changePinCommand && correctOldPin) {
+      replyCode = 400;
       int start = data.indexOf("newPin=");
       if (start > -1) {
         String newPin = data.substring(start + 7, start + 7 + 4);
         if (newPin.length() == 4) {
-          Serial.println(newPin);
+          Serial.println("Changed PIN");
           writePinToEEPROM(newPin);
           PIN = readPinFromEEPROM();
-          memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
-          ether.httpServerReply(sizeof replyOK - 1);
-        }
-        else {
-          memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
-          ether.httpServerReply(sizeof replyBadRequest - 1);
+          replyCode = 200;
         }
       }
-      else {
-        memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
-        ether.httpServerReply(sizeof replyBadRequest - 1);
-      }
     }
-    else {
-      memcpy_P(ether.tcpOffset(), replyUnauthorized, sizeof replyUnauthorized);
-      ether.httpServerReply(sizeof replyUnauthorized - 1);
-    }
+
+    ethernetReply(replyCode);
+
+  }
+}
+
+void ethernetReply(int replyCode) {
+  if (replyCode == 200) {
+    memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
+    ether.httpServerReply(sizeof replyOK - 1);
+  }
+  else if (replyCode == 400) {
+    memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
+    ether.httpServerReply(sizeof replyBadRequest - 1);
+  }
+  else {
+    memcpy_P(ether.tcpOffset(), replyUnauthorized, sizeof replyUnauthorized);
+    ether.httpServerReply(sizeof replyUnauthorized - 1);
   }
 }
 
