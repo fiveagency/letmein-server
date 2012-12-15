@@ -8,6 +8,7 @@
 
 #define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
+const String PIN = "1234";
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
@@ -128,11 +129,20 @@ void checkEthernet() {
   word len = ether.packetReceive();
   word pos = ether.packetLoop(len);
   if (pos) {
-    char *data = (char *) Ethernet::buffer + pos;
-    
-    if(strstr(data, "GET /door/open") != 0) {
-      Serial.println("Received OPEN command via Ethernet");
-      turnRelayOn();
+    String data = (char *) Ethernet::buffer + pos;
+
+    boolean openCommand = data.startsWith("POST /door/open HTTP");
+    boolean validateCommand = data.startsWith("POST /door/validate HTTP");
+    boolean correctPin = data.indexOf("pin=" + PIN) > -1;
+
+    if(correctPin && (openCommand || validateCommand)) {
+      if (openCommand) {
+        Serial.println("Received OPEN command via Ethernet");
+        turnRelayOn();
+      }
+      if (validateCommand) {
+        Serial.println("Validated pin via Ethernet");
+      }
       memcpy_P(ether.tcpOffset(), pageOK, sizeof pageOK);
       ether.httpServerReply(sizeof pageOK - 1);
     }
