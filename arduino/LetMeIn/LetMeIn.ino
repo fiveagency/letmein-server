@@ -148,11 +148,11 @@ void checkEthernet() {
   if (pos) {
     String data = (char *) Ethernet::buffer + pos;
 
-    boolean openCommand = data.startsWith("POST /door/open HTTP");
-    boolean validateCommand = data.startsWith("POST /door/validate HTTP");
+    boolean openCommand = data.startsWith("POST /letmein/door/open HTTP");
+    boolean validateCommand = data.startsWith("POST /letmein/door/validate HTTP");
     boolean correctPin = data.indexOf("pin=" + PIN) > -1;
     
-    boolean changePinCommand = data.startsWith("POST /door/changePin HTTP");
+    boolean changePinCommand = data.startsWith("POST /letmein/door/changePin HTTP");
     boolean correctOldPin = data.indexOf("oldPin=" + PIN) > -1;
 
     int replyCode = 401;
