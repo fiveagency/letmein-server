@@ -8,7 +8,6 @@
 
 #define STATIC 1  // set to 1 to disable DHCP (adjust myip/gwip values below)
 
-const String PIN = "1234";
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
@@ -29,8 +28,11 @@ static byte gwip[] = { 10,5,1,1 };
 static byte MAC[] = { 0x74,0x69,0x69,0x2D,0x30,0x38 };
 
 byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
-char pageOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
-char pageFail[] PROGMEM = "HTTP/1.1 401 Unauthorized\r\n";
+char replyOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
+char replyUnauthorized[] PROGMEM = "HTTP/1.1 401 Unauthorized\r\n";
+char replyBadRequest[] PROGMEM = "HTTP/1.1 400 Bad Request\r\n";
+
+String PIN = "1234";
 
 void setup() {
   digitalWrite(relay, RELAY_OFF);
@@ -134,6 +136,9 @@ void checkEthernet() {
     boolean openCommand = data.startsWith("POST /door/open HTTP");
     boolean validateCommand = data.startsWith("POST /door/validate HTTP");
     boolean correctPin = data.indexOf("pin=" + PIN) > -1;
+    
+    boolean changePinCommand = data.startsWith("POST /door/changePin HTTP");
+    boolean correctOldPin = data.indexOf("oldPin=" + PIN) > -1;
 
     if(correctPin && (openCommand || validateCommand)) {
       if (openCommand) {
@@ -143,12 +148,32 @@ void checkEthernet() {
       if (validateCommand) {
         Serial.println("Validated pin via Ethernet");
       }
-      memcpy_P(ether.tcpOffset(), pageOK, sizeof pageOK);
-      ether.httpServerReply(sizeof pageOK - 1);
+      memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
+      ether.httpServerReply(sizeof replyOK - 1);
+    }
+    else if (changePinCommand && correctOldPin) {
+      int start = data.indexOf("newPin=");
+      if (start > -1) {
+        String newPin = data.substring(start + 7, start + 7 + 4);
+        if (newPin.length() == 4) {
+          Serial.println(newPin);
+          PIN = newPin;
+          memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
+          ether.httpServerReply(sizeof replyOK - 1);
+        }
+        else {
+          memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
+          ether.httpServerReply(sizeof replyBadRequest - 1);
+        }
+      }
+      else {
+        memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
+        ether.httpServerReply(sizeof replyBadRequest - 1);
+      }
     }
     else {
-      memcpy_P(ether.tcpOffset(), pageFail, sizeof pageFail);
-      ether.httpServerReply(sizeof pageFail - 1);
+      memcpy_P(ether.tcpOffset(), replyUnauthorized, sizeof replyUnauthorized);
+      ether.httpServerReply(sizeof replyUnauthorized - 1);
     }
   }
 }
