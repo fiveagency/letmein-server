@@ -8,6 +8,7 @@ class AdminController {
     static allowedMethods = [update: "POST"]
     
     def springSecurityService
+    def arduinoService
 
     def index() {
         redirect(action: "edit", params:params)
@@ -59,11 +60,14 @@ class AdminController {
             }
         }
         
-        doorInstance.properties = params
-
-        if (!doorInstance.save(flush: true)) {
-            render(view: "edit", model: [doorInstance: doorInstance])
-            return
+        def newPin = params.pin
+        if (newPin != doorInstance.pin) {
+            arduinoService.changePin(newPin)
+            doorInstance.properties = params
+            if (!doorInstance.save(flush: true)) {
+                render(view: "edit", model: [doorInstance: doorInstance])
+                return
+            }
         }
 
         flash.message = message(code: 'settings.updated.message', default: 'Settings updated')

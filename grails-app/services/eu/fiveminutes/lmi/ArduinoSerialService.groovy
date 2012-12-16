@@ -22,7 +22,7 @@ class ArduinoSerialService {
         initialize()
     }
 
-    def sendRequest() {
+    def sendOpenRequest() {
         try {
             write()
         } catch (Exception e) {
