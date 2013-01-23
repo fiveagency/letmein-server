@@ -23,7 +23,7 @@
             <!-- 
             <img class="cameraStream" src="http://${grailsApplication.config.camera.ip}/img/video.mjpeg">
              -->
-            <g:remoteLink action="open" onLoading="showOpenButtonPressed()" onComplete="hideOpenButtonPressed()" >
+            <g:remoteLink action="openAuth" onLoading="showOpenButtonPressed()" onComplete="hideOpenButtonPressed()" >
                 <img id="doorButton" class="doorButton" src="<g:resource dir="images" file="red_button.png"/> "/>
                 <img id="doorButtonPressed" class="doorButton" style="display: none;" src="<g:resource dir="images" file="kapow.png"/> "/>
             </g:remoteLink>

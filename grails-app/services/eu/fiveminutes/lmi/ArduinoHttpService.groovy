@@ -12,15 +12,20 @@ class ArduinoHttpService {
     }
 
     def sendOpenRequest() {
-        log.info "Sending open command"
         def door = Door.list(max:1)[0]
+        sendOpenRequest(door.pin)
+    }
+
+    def sendOpenRequest(String pin) {
+        log.info "Sending open command"
         try {
             def http = new HTTPBuilder(baseUrl)
-            def postBody = [pin:door.pin]
+            def postBody = [pin:pin]
             http.post(path: "/letmein/door/open", body: postBody)
+            log.info "Sent open command"
         }
         catch (Exception e) {
-            log.error(e, e)
+            log.error("Error while sending open command", e)
         }
     }
 
@@ -31,9 +36,10 @@ class ArduinoHttpService {
             def http = new HTTPBuilder(baseUrl)
             def postBody = [oldPin:door.pin, newPin:newPin]
             http.post(path: "/letmein/door/changePin", body: postBody)
+            log.info "Sent change pin command"
         }
         catch (Exception e) {
-            log.error(e, e)
+            log.error("Error while sending change pin command", e)
         }
     }
 }
