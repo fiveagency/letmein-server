@@ -14,6 +14,8 @@ const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
 const int INACTIVE_STATE_DURATION = 10000;
+const uint32_t PING_INTERVAL_MICROS = 5000000;
+const int PING_COUNT_LIMIT = 5;
 const int relay = 4;
 const int MSP430 = 2;
 const int pinAddress = 0;
@@ -30,6 +32,9 @@ static byte gwip[] = { 10,5,1,1 };
 
 // ethernet mac address - must be unique on your network
 static byte MAC[] = { 0x74,0x69,0x69,0x2D,0x30,0x38 };
+static byte pingServer[] = { 10,5,1,1 };
+static uint32_t pingTimer;
+int pingCounter = PING_COUNT_LIMIT;
 
 byte Ethernet::buffer[500]; // tcp/ip send and receive buffer
 char replyOK[] PROGMEM = "HTTP/1.1 200 OK\r\n";
@@ -37,6 +42,8 @@ char replyUnauthorized[] PROGMEM = "HTTP/1.1 401 Unauthorized\r\n";
 char replyBadRequest[] PROGMEM = "HTTP/1.1 400 Bad Request\r\n";
 
 String PIN;
+
+void(* resetFunc) (void) = 0;
 
 void setup() {
   digitalWrite(relay, RELAY_OFF);
@@ -82,6 +89,9 @@ void ethernetSetup() {
   ether.printIp("IP:  ", ether.myip);
   ether.printIp("GW:  ", ether.gwip);  
   ether.printIp("DNS: ", ether.dnsip); 
+  ether.printIp("pingServer: ", pingServer);
+  
+  pingTimer = -9999999; // start timing out right away
 }
 
 void loop(){
@@ -139,16 +149,20 @@ void checkMSP430() {
 }
 
 void checkEthernet() {
-  // DHCP expiration is a bit brutal, because all other ethernet activity and
-  // incoming packets will be ignored until a new lease has been acquired
-  if (!STATIC && !ether.dhcpValid()) {
-    Serial.println("Acquiring DHCP lease again");
-    ether.dhcpSetup();
-  }
-
+  
   word len = ether.packetReceive();
   word pos = ether.packetLoop(len);
-  if (pos) {
+  
+  // report whenever a reply to our outgoing ping comes back
+  if (len > 0 && ether.packetLoopIcmpCheckReply(pingServer)) {
+    Serial.print("PingServer reply");
+    Serial.print("  ");
+    Serial.print((micros() - pingTimer) * 0.001, 3);
+    Serial.println(" ms");
+    //reset counter
+    pingCounter = PING_COUNT_LIMIT;
+  }
+  else if (pos) {
     String data = (char *) Ethernet::buffer + pos;
 
     boolean openCommand = data.startsWith("POST /letmein/door/open HTTP");
@@ -184,7 +198,22 @@ void checkEthernet() {
     }
 
     ethernetReply(replyCode);
-
+  }
+  
+  if (pingCounter <= 0 && state != RELAY_ON) {
+    Serial.println("RESET!");
+    delay(1000);
+    resetFunc(); //call reset 
+  }
+  // ping a remote server once every few seconds
+  if (micros() - pingTimer >= PING_INTERVAL_MICROS) {
+    Serial.print("Pings left: ");
+    Serial.println(pingCounter);
+    
+    pingCounter--;
+    ether.printIp("Pinging: ", pingServer);
+    pingTimer = micros();
+    ether.clientIcmpRequest(pingServer);
   }
 }
 
