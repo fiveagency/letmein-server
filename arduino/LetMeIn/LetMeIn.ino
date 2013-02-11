@@ -68,6 +68,9 @@ void ethernetSetup() {
     Serial.println("DHCP failed");
 #endif
 
+  //call this to report others pinging us
+  ether.registerPingCallback(pingHandler);
+  
   Serial.print("MAC: ");
   for (byte i = 0; i < 6; ++i) {
     Serial.print(MAC[i], HEX);
@@ -211,4 +214,9 @@ String readPinFromEEPROM() {
   EEPROM.readBlock(pinAddress, data);
   String pin = data;
   return pin;
+}
+
+// called when a ping comes in (replies to it are automatic)
+static void pingHandler (byte* ptr) {
+  ether.printIp(">>> ping from: ", ptr);
 }
