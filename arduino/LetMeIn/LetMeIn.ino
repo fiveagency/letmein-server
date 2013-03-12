@@ -155,10 +155,10 @@ void checkEthernet() {
   
   // report whenever a reply to our outgoing ping comes back
   if (len > 0 && ether.packetLoopIcmpCheckReply(pingServer)) {
-    Serial.print("PingServer reply");
-    Serial.print("  ");
-    Serial.print((micros() - pingTimer) * 0.001, 3);
-    Serial.println(" ms");
+    //Serial.print("PingServer reply");
+    //Serial.print("  ");
+    //Serial.print((micros() - pingTimer) * 0.001, 3);
+    //Serial.println(" ms");
     //reset counter
     pingCounter = PING_COUNT_LIMIT;
   }
@@ -207,11 +207,16 @@ void checkEthernet() {
   }
   // ping a remote server once every few seconds
   if (micros() - pingTimer >= PING_INTERVAL_MICROS) {
-    Serial.print("Pings left: ");
-    Serial.println(pingCounter);
+    //Serial.print("Pings left: ");
+    //Serial.println(pingCounter);
+    //ether.printIp("Pinging: ", pingServer);
+    
+    if (pingCounter < PING_COUNT_LIMIT) {
+        Serial.print("Pings left: ");
+        Serial.println(pingCounter);
+    }
     
     pingCounter--;
-    ether.printIp("Pinging: ", pingServer);
     pingTimer = micros();
     ether.clientIcmpRequest(pingServer);
   }
