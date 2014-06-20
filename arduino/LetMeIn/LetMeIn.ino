@@ -13,7 +13,7 @@
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 const int RELAY_SIGNAL_DURATION = 250;
-const int INACTIVE_STATE_DURATION = 10000;
+const int INACTIVE_STATE_DURATION = 3000;
 const uint32_t PING_INTERVAL_MICROS = 5000000;
 const int PING_COUNT_LIMIT = 5;
 const int relay = 4;
@@ -96,7 +96,7 @@ void ethernetSetup() {
 
 void loop(){
   turnRelayOff();
-  checkMSP430();
+  //checkMSP430();
   checkEthernet();
 }
 
@@ -164,6 +164,10 @@ void checkEthernet() {
   }
   else if (pos) {
     String data = (char *) Ethernet::buffer + pos;
+    Serial.println("**********************");
+    
+    Serial.println(data);
+    
 
     boolean openCommand = data.startsWith("POST /letmein/door/open HTTP");
     boolean validateCommand = data.startsWith("POST /letmein/door/validate HTTP");
@@ -223,15 +227,20 @@ void checkEthernet() {
 }
 
 void ethernetReply(int replyCode) {
+  Serial.println("ethernetReply");
+  Serial.println(replyCode);
   if (replyCode == 200) {
+    Serial.println("replyCode == 200");
     memcpy_P(ether.tcpOffset(), replyOK, sizeof replyOK);
     ether.httpServerReply(sizeof replyOK - 1);
   }
   else if (replyCode == 400) {
+    Serial.println("replyCode == 400");
     memcpy_P(ether.tcpOffset(), replyBadRequest, sizeof replyBadRequest);
     ether.httpServerReply(sizeof replyBadRequest - 1);
   }
   else {
+    Serial.println("replyCode else");
     memcpy_P(ether.tcpOffset(), replyUnauthorized, sizeof replyUnauthorized);
     ether.httpServerReply(sizeof replyUnauthorized - 1);
   }
