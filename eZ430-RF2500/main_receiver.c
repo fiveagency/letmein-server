@@ -53,7 +53,7 @@ void main (void)
 
     // 5ms delay to compensate for time to startup between MSP430 and CC1100/2500
     __delay_cycles(5000);
-  
+
     TI_CC_SPISetup();                         // Initialize SPI port
 
     P2SEL = 0;                                // Sets P2.6 & P2.7 as GPIO
@@ -75,7 +75,7 @@ void main (void)
 
     P4DIR = BIT3; // P4.3 is output
     P4OUT &= ~BIT3;
-    
+
   __bis_SR_register(LPM3_bits + GIE);       // Enter LPM3, enable interrupts
 }
 

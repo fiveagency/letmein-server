@@ -53,7 +53,7 @@
 // Comments: Initial Release Version
 //******************************************************************************
 
-#include "msp430x22x4.h"
+#include <msp430.h>
 
 // SPI port definitions                     // Adjust the values for the chosen
 #define TI_CC_SPI_USART0_PxSEL  P3SEL       // interfaces, according to the pin
