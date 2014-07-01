@@ -29,13 +29,18 @@ https://github.com/jcw/ethercard is used to receive http requests.
 
 Todo:
 -----
-* use secret knock to open the door. This will be done using piezo element placed on the door. Communication between the door and Arduino will be done using two eZ430-RF2500 wireless boards. One will be connected to piezo element on the door. Other will be connected to Arduino or possibly to the server app
+* use secret knock to open the door. This will be done using piezo element placed on the door. Communication between the door and Arduino will be done using two eZ430-RF2500 wireless boards. One will be connected to Arduino pro micro that's connected to piezo element on the door. Other will be connected to Arduino that's connected to relay
 
-Arduino is also connected to eZ430-RF2500 wireless board (receiver):
+Arduino is connected to eZ430-RF2500 wireless board (receiver):
 * VCC - 3.3V
 * GND - GND
 * P4.3 (Pin 8) - Pin 2
 
-eZ430-RF2500 wireless board - sender (connected to piezo and mounted on door):
+Arduino pro micro (3.3V) is connected to eZ430-RF2500 wireless board (transmitter):
+* VCC - VCC
+* GND - GND
+* P2.0 (Pin 3) - Pin 4
+
+Arduino pro micro detect a secret knock using piezeo element mounted on door (there's a megaohm connected in parallel):
 * GND - Piezo -
-* A0 (Pin 3) - Piezo +
+* A0 - Piezo +
