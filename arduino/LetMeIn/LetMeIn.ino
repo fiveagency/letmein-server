@@ -19,6 +19,7 @@ const int PING_COUNT_LIMIT = 5;
 const int relay = 4;
 const int MSP430 = 2;
 const int pinAddress = 0;
+const int led = 13;
 
 int state = RELAY_OFF;
 unsigned long stateStartMilis = 0;
@@ -48,6 +49,7 @@ void(* resetFunc) (void) = 0;
 void setup() {
   digitalWrite(relay, RELAY_OFF);
   pinMode(relay, OUTPUT);
+  pinMode(led, OUTPUT);
   
   Serial.begin(9600);
   Serial.println("Program start.");
@@ -96,7 +98,7 @@ void ethernetSetup() {
 
 void loop(){
   turnRelayOff();
-  //checkMSP430();
+  checkMSP430();
   checkEthernet();
 }
 
@@ -114,6 +116,7 @@ void turnRelayOn() {
     state = RELAY_ON;
     digitalWrite(relay, RELAY_ON);
     stateStartMilis = millis();
+    digitalWrite(led, HIGH);
   }
   else {
     Serial.println("Relay is not in off state");
@@ -128,6 +131,7 @@ void turnRelayOff() {
       state = INACTIVE_STATE;
       digitalWrite(relay, RELAY_OFF);
       stateStartMilis = millis();
+      digitalWrite(led, LOW);
     }
   }
   else if (state == INACTIVE_STATE) {
